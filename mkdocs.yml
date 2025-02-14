@@ -1,0 +1,8 @@
+site_name: "Aws Glue Job Template"
+site_description: "Create an Aws Glue Job using this template"
+
+nav:
+  - Template Usage: index.md
+
+plugins:
+  - techdocs-core

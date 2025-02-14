@@ -1,0 +1,37 @@
+stages:
+  - lint
+  - test
+  - deploy
+
+lint:
+  stage: lint
+  image: python:3.9
+  script:
+    - cd job
+    - pip install flake8 black
+    - flake8 --ignore F403,F405,E501
+    - black --check .
+
+pytest:
+  stage: test
+  variables:
+    DATALAKE_FORMATS: iceberg
+  image: 
+    name: amazon/aws-glue-libs:glue_libs_4.0.0_image_01
+    entrypoint: [""]
+  script:
+    - cd job
+    - python3 -m pip install -r tests/requirements-test.txt
+    - python3 -m pip install -r src/requirements.txt
+    - python3 -m pytest tests/
+
+deploy-to-s3:
+  tags: ["gitlab-runner-private-tag"]
+  stage: deploy
+  image: amazon/aws-cli:2.23.4
+  variables:
+    S3_BUCKET: ${S3_DESTINATION_BUCKET}
+  script:
+    - aws s3 cp job/src/main.py s3://$S3_BUCKET/glue-jobs/
+  only:
+    - main

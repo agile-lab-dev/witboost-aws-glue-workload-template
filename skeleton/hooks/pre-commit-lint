@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Move in the python codebase
+cd job
+
+# Run Black formatter
+black --check .
+BLACK_EXIT=$?
+
+# Run Flake8 linter
+flake8 . --ignore F403,F405,E501
+FLAKE8_EXIT=$?
+
+# Prevent commit if either check fails
+if [ $BLACK_EXIT -ne 0 ] || [ $FLAKE8_EXIT -ne 0 ]; then
+    echo "Code quality checks failed. Please fix formatting and linting issues by running `black job/`"
+    exit 1
+fi
+
+exit 0

@@ -1,0 +1,70 @@
+{% set domainNameNormalized = values.identifier.split(".")[0] | replace(r/[^\w]/g, "") %}
+{% set dataProductNameNormalized = values.identifier.split(".")[1] | replace(r/[^\w]/g, "") %}
+{% set dataProductMajorVersion = values.identifier.split(".")[2] | replace(r/[^\w]/g, "") %}
+{% set componentNameNormalized = values.identifier.split(".")[3] | replace(r/[^\w]/g, "") %}
+{% set ComponentDependencies = values.dependsOn | list if values.dependsOn else [] %}
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.identifier }}
+  description: ${{ values.description | dump }}
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - aws
+    - glue
+    - gluejob
+    - workload
+spec:
+  type: workload
+  lifecycle: experimental
+  owner: ${{ values.developmentGroup }}
+  system: ${{ values.dataproduct | dump }}
+  domain: ${{ values.domain | dump }}
+  mesh:
+    name: ${{ values.name | dump }}
+    fullyQualifiedName: ${{ values.domainName }} - ${{ values.dataproductName }} - version ${{ dataProductMajorVersion }} - ${{ values.name }}
+    description: ${{ values.description | dump }}
+    kind: workload
+    version: ${{ dataProductMajorVersion + ".0.0" }}
+    infrastructureTemplateId: ${{ values.infrastructureTemplateId }}
+    useCaseTemplateId: ${{ values.useCaseTemplateId }}
+    dependsOn:
+        {% if values.dependsOn | length > 0 %}
+        {% for i in values.dependsOn %}
+        - ${{ i }}
+        {% endfor %}
+        {% else %}{% endif %}
+        {% if values.storageArea not in ComponentDependencies %}
+        - ${{ values.storageArea }}
+        {% endif %}
+    platform: AWS
+    technology: Glue
+    workloadType: batch
+    connectionType: DataPipeline
+    tags: {% if values.tags | length > 0 %}{% for i in values.tags %}
+      - tagFQN: ${{ i }}
+        source: Tag
+        labelType: Manual
+        state: Confirmed{% endfor %}{% else %}[]{% endif %}
+    readsFrom: {% if values.readsFrom | length > 0 %}{% for i in values.readsFrom %}
+      - ${{ i }}{% endfor %}{% else %}[]{% endif %}
+    specific:
+      region: ${{ values.region }}
+      # Default job name inside the job/src folder
+      scriptName: ${{ values.scriptName }}
+      iamRole: ${{ values.iamRole }}
+      workerType: ${{ values.workerType }}
+      numberOfWorkers: ${{ values.numberOfWorkers }}
+      executionClass: {% if values.isFlex == true %} FLEX {% else %} STANDARD {% endif %}
+      storageAreaId: ${{ values.storageArea }}
+      timeout: ${{ values.timeout }}
+      catalogName: ${{ values.catalogName }}
+      warehouseLocation: ${{ values.warehouseLocation }}
+      additionalJobParameters: {% if values.additionalJobParameters | length > 0 %}
+      {% for param in values.additionalJobParameters %}
+        - key: ${{ param.key }}
+          value: ${{ param.value }}
+      {% endfor %}{% else %}[]{% endif %}
+        
+

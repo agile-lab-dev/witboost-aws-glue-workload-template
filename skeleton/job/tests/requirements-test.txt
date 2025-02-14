@@ -1,0 +1,9 @@
+cfn-lint 
+flake8 
+pytest-cov 
+pytest 
+pandas==2.2.0
+moto[all]==5.0.20
+flask==3.0.2
+flask_cors
+pyarrow==15.0.0
