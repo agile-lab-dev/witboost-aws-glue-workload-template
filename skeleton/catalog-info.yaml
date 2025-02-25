@@ -52,7 +52,7 @@ spec:
     specific:
       region: ${{ values.region }}
       # Default job name inside the job/src folder
-      scriptName: ${{ values.scriptName }}
+      scriptName: v${{dataProductMajorVersion}}/glue-jobs/${{ values.identifier.split(".").slice(0, 3).join(".") }}/main.py
       iamRole: ${{ values.iamRole }}
       workerType: ${{ values.workerType }}
       numberOfWorkers: ${{ values.numberOfWorkers }}

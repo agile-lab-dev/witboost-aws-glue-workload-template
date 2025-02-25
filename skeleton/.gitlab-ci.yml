@@ -1,3 +1,7 @@
+{% set dataProductName = values.dataproduct.split(".")[1] %}
+{% set domainNameNormalized = values.domain | replace(r/domain:| |-/, "") %}
+{% set dataProductMajorVersion = values.identifier.split(".")[2] | replace(r/[^\w]/g, "") %}
+
 stages:
   - lint
   - test
@@ -25,13 +29,34 @@ pytest:
     - python3 -m pip install -r src/requirements.txt
     - python3 -m pytest tests/
 
-deploy-to-s3:
+.deploy:
   tags: ["gitlab-runner-private-tag"]
   stage: deploy
-  image: amazon/aws-cli:2.23.4
-  variables:
-    S3_BUCKET: ${S3_DESTINATION_BUCKET}
+  image: 
+    name: amazon/aws-cli:2.23.4
+    entrypoint: [""]
   script:
-    - aws s3 cp job/src/main.py s3://$S3_BUCKET/glue-jobs/
-  only:
-    - main
+    # Compute bucket name
+    - |
+      source ./ci-utils/compute-bucket-name.sh
+      S3_BUCKET=$(compute_bucket_name ${{domainNameNormalized}} ${{dataProductName}} "$environment")
+      echo "Deploying to bucket: $S3_BUCKET"
+    # Upload artifact  
+    - aws s3 cp job/src/main.py s3://$S3_BUCKET/v${{dataProductMajorVersion}}/glue-jobs/${{ values.identifier.split(".").slice(0, 3).join(".") }}/main.py
+
+deploy-development:
+  extends: .deploy
+  variables:
+    environment: development
+
+deploy-qa:
+  extends: .deploy
+  variables:
+    environment: qa
+  when: manual
+
+deploy-production:
+  extends: .deploy
+  variables:
+    environment: production
+  when: manual
