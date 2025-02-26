@@ -50,7 +50,25 @@
 The *Glue Job Tech Adapter* automatically attaches a number of default [parameters](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html) to the Glue Job instance.
 Additionaly you can specify other parameters, which will be appended to the default ones, potentially overriding them.
 
+| Field name             | Example value                                        | Description                           |
+|:-----------------------|:-----------------------------------------------------|:--------------------------------------|
+| **Additional Job Parameters**     | ${{ values.additionalJobParameters }}     | List of additional job parameters     |
+| **Additional Spark Properties**   | ${{ values.additionalSparkProperties }}   | List of additional spark properties   |
+
+The following tables lists the default lists of parameters and spark properties that are automatically configured in your Glue Job.
+
 **Default parameters**
+
+| Key                                       | Value      |
+|:------------------------------------------|:-----------|
+| **--datalake-formats**                    | iceberg    |
+| **--enable-job-insights**                 | true       |
+| **--enable-metrics**                      | true       |
+| **--enable-continuous-cloudwatch-log**    | true       |
+| **--job-language**                        | python     |
+| **--enable-spark-ui**                     | true       |
+
+**Default spark properties**
 
 | Key                                  | Value                                                                                     |
 |:-------------------------------------|:------------------------------------------------------------------------------------------|
@@ -59,10 +77,4 @@ Additionaly you can specify other parameters, which will be appended to the defa
 | **--conf**                           | spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog                      |
 | **--conf**                           | spark.sql.catalog.glue_catalog.warehouse=`warehouseLocation`                              |
 | **--conf**                           | spark.sql.catalog.glue_catalog.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog       |
-| **--conf**                           | spark.sql.defaultCatalog=glue_catalog                                                        |
-| **--datalake-formats**               | iceberg                                                                                   |
-| **--enable-job-insights**            | true                                                                                      |
-| **--enable-metrics**                 | true                                                                                      |
-| **--enable-continuous-cloudwatch-log** | true                                                                                      |
-| **--job-language**                   | python                                                                                    |
-| **--enable-spark-ui**                | true                                                                                      |
+| **--conf**                           | spark.sql.defaultCatalog=glue_catalog                                                     |

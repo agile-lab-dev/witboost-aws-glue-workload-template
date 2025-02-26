@@ -210,11 +210,36 @@ spec:
           title: Additional parameters
           description: |
             Here you can define additional [glue job parameters](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html), for example to provide inputs for your job. 
-            Beware that a number of parameters is injected at deployment time. 
+            Beware that a number of parameters is injected at deployment time. Additional job parameters override default parameters.
             Refer to the documentation of this template for more on this.
           type: object
           properties:
             jobparameters:
+              title: Parameters
+              type: array
+              ui:ArrayFieldTemplate: ArrayTableTemplate
+              items:
+                type: object
+                ui:ObjectFieldTemplate: TableRowTemplate
+                required:
+                  - key
+                  - value
+                properties:
+                  key:
+                    type: string
+                    title: Key
+                  value:
+                    type: string
+                    title: Value
+        additionalSparkProperties:
+          title: Additional Spark Properties
+          description: |
+            Here you can define additional [spark properties](https://downloads.apache.org/spark/docs/2.1.2/configuration.html#dynamically-loading-spark-properties). 
+            Beware that a number of spark properties is injected by default by the tech adapter. Additional spark properties override default properties.
+            Refer to the documentation of this template for more on this.
+          type: object
+          properties:
+            sparkproperties:
               title: Parameters
               type: array
               ui:ArrayFieldTemplate: ArrayTableTemplate
@@ -255,11 +280,11 @@ spec:
           isFlex: '${{ parameters.executionclass.isFlex }}'
           timeout: '${{ parameters.timeout }}'
           numberOfWorkers: '${{ parameters.numberOfWorkers }}'
-          scriptName: main.py
           catalogName: '${{ parameters.catalog }}'
           warehouseLocation: '${{ parameters.warehouseLocation }}'
           iamRole: '${{ parameters.iamRole }}'
           additionalJobParameters: '${{ parameters.additionalJobParameters.jobparameters }}'
+          additionalSparkProperties: '${{ parameters.additionalSparkProperties.sparkproperties }}'
           storageArea: '${{parameters.storageArea}}'
           useCaseTemplateId: urn:dmb:utm:aws-gluejob-template:0.0.0
           infrastructureTemplateId: urn:dmb:itm:aws-gluejob-provisioner:0

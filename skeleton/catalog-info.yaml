@@ -66,5 +66,10 @@ spec:
         - key: ${{ param.key }}
           value: ${{ param.value }}
       {% endfor %}{% else %}[]{% endif %}
+      additionalSparkProperties: {% if values.additionalSparkProperties | length > 0 %}
+      {% for param in values.additionalSparkProperties %}
+        - key: ${{ param.key }}
+          value: ${{ param.value }}
+      {% endfor %}{% else %}[]{% endif %}
         
 

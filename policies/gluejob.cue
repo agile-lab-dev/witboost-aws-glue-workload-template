@@ -1,7 +1,11 @@
 import "strings"
+import "regexp"
+
 let splits = strings.Split(id, ":")
 let domain = splits[3]
 let majorVersion = splits[5]
+let componentName = splits[6]
+let componentNameNormalized = regexp.ReplaceAll("[^\\w]", componentName, "")
 
 #Id:               string & =~"^[a-zA-Z0-9:._\\-]+$"
 #ComponentId:      #Id & =~"^urn:dmb:cmp:\(domain):[a-zA-Z0-9_\\-]+:\(majorVersion):[a-zA-Z0-9_\\-]+$"
@@ -15,10 +19,14 @@ let majorVersion = splits[5]
 	href?:        string | null
 }
 
+#JobParameter: {
+    key: string
+    value: string
+}
+
 #GlueJobSpecific: {
     region: string & =~"^(us|eu|ap|sa|ca|me|af)-[a-z]+-\\d+$"
     iamRole: string & =~"^arn:aws:iam::\\d{12}:role/[A-Za-z0-9+=,.@_-]+$"
-    scriptName: string
     workerType: string & =~"(?i)^(G.1X|G.2X|G.4X|G.8X)$"
     numberOfWorkers: int & > 0
     executionClass: string & =~"^(STANDARD|FLEX)$"
@@ -26,6 +34,9 @@ let majorVersion = splits[5]
     timeout: int & > 0
     catalogName: "glue_catalog"
     warehouseLocation: string
+    scriptName: string & =~"v\(majorVersion)\/glue-jobs\/\(componentNameNormalized)\/(.*)$"
+    additionalJobParameters: [...#JobParameter]
+    additionalSparkProperties: [...#JobParameter]
 }
 
 
