@@ -3,6 +3,7 @@
 {% set dataProductMajorVersion = values.identifier.split(".")[2] | replace(r/[^\w]/g, "") %}
 {% set componentNameNormalized = values.identifier.split(".")[3] | replace(r/[^\w]/g, "") %}
 {% set ComponentDependencies = values.dependsOn | list if values.dependsOn else [] %}
+
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
@@ -52,7 +53,7 @@ spec:
     specific:
       region: ${{ values.region }}
       # Default job name inside the job/src folder
-      scriptName: v${{dataProductMajorVersion}}/glue-jobs/${{ values.identifier.split(".").slice(0, 3).join(".") }}/main.py
+      scriptName: v${{dataProductMajorVersion}}/glue-jobs/${{componentNameNormalized}}/main.py
       iamRole: ${{ values.iamRole }}
       workerType: ${{ values.workerType }}
       numberOfWorkers: ${{ values.numberOfWorkers }}

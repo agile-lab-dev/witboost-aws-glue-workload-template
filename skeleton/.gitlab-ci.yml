@@ -1,6 +1,9 @@
 {% set dataProductName = values.dataproduct.split(".")[1] %}
 {% set domainNameNormalized = values.domain | replace(r/domain:| |-/, "") %}
 {% set dataProductMajorVersion = values.identifier.split(".")[2] | replace(r/[^\w]/g, "") %}
+{% set componentNameNormalized = values.identifier.split(".")[3] | replace(r/[^\w]/g, "") %}
+{% set storageComponentNameNormalized = values.storageArea.split(":")[6] %}
+
 
 stages:
   - lint
@@ -39,10 +42,10 @@ pytest:
     # Compute bucket name
     - |
       source ./ci-utils/compute-bucket-name.sh
-      S3_BUCKET=$(compute_bucket_name ${{domainNameNormalized}} ${{dataProductName}} "$environment")
+      S3_BUCKET=$(compute_bucket_name ${{domainNameNormalized}} ${{dataProductName}} ${{storageComponentNameNormalized}} "$environment")
       echo "Deploying to bucket: $S3_BUCKET"
     # Upload artifact  
-    - aws s3 cp job/src/main.py s3://$S3_BUCKET/v${{dataProductMajorVersion}}/glue-jobs/${{ values.identifier.split(".").slice(0, 3).join(".") }}/main.py
+    - aws s3 cp job/src/main.py s3://$S3_BUCKET/v${{dataProductMajorVersion}}/glue-jobs/${{componentNameNormalized}}/main.py
 
 deploy-development:
   extends: .deploy

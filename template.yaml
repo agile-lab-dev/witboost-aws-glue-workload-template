@@ -174,7 +174,7 @@ spec:
           useCaseTemplateVersion: 0.0.0
           organizationName: AgileDMBSandbox
           destination: &destination 'gitlab.com?owner=AgileDMBSandbox%2F${{orgname}}%2Fmesh.repository%2F${{ parameters.domain | replace(r/domain:| |-/, "") }}%2F${{ parameters.dataproduct.split(".")[1] | replace(r/ |-/g, "") }}&repo=${{ parameters.name.split(" ") | join("") | lower }}'
-
+          rootDirectory: .
 
     - id: publish
       name: Publish
@@ -183,7 +183,7 @@ spec:
         allowedHosts: ['gitlab.com']
         description: 'This is ${{ parameters.name }}'
         repoUrl: *destination
-        rootDirectory: ${{ parameters.rootDirectory }}
+        rootDirectory: '.'
         dataproduct: '${{ parameters.dataproduct }}'
 
     - id: register
@@ -191,7 +191,7 @@ spec:
       action: catalog:register
       input:
         repoContentsUrl: '${{ steps.publish.output.repoContentsUrl }}'
-        catalogInfoPath: /${{ parameters.rootDirectory }}/catalog-info.yaml
+        catalogInfoPath: /catalog-info.yaml
 
   output:
     links:
