@@ -1,3 +1,4 @@
+%SKELETON
 {% set domainNameNormalized = values.identifier.split(".")[0] | replace(r/[^\w]/g, "") %}
 {% set dataProductNameNormalized = values.identifier.split(".")[1] | replace(r/[^\w]/g, "") %}
 {% set dataProductMajorVersion = values.identifier.split(".")[2] | replace(r/[^\w]/g, "") %}
@@ -62,13 +63,13 @@ spec:
       timeout: ${{ values.timeout }}
       catalogName: ${{ values.catalogName }}
       warehouseLocation: ${{ values.warehouseLocation }}
-      additionalJobParameters: {% if values.additionalJobParameters | length > 0 %}
-      {% for param in values.additionalJobParameters %}
+      additionalJobParameters: {% if parameters.additionalJobParameters.jobparameters | length > 0 %}
+      {% for param in parameters.additionalJobParameters.jobparameters %}
         - key: ${{ param.key }}
           value: ${{ param.value }}
       {% endfor %}{% else %}[]{% endif %}
-      additionalSparkProperties: {% if values.additionalSparkProperties | length > 0 %}
-      {% for param in values.additionalSparkProperties %}
+      additionalSparkProperties: {% if parameters.additionalSparkProperties.sparkproperties | length > 0 %}
+      {% for param in parameters.additionalSparkProperties.sparkproperties %}
         - key: ${{ param.key }}
           value: ${{ param.value }}
       {% endfor %}{% else %}[]{% endif %}

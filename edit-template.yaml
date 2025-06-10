@@ -1,4 +1,4 @@
-apiVersion: witboost.com/v1
+apiVersion: witboost.com/v2
 kind: EditTemplate
 metadata:
   name: edit-aws-gluejob-template
@@ -257,38 +257,4 @@ spec:
                     type: string
                     title: Value
         
-  steps:
-    - id: template
-      name: Fetch Skeleton + Template
-      action: fetch:template
-      input:
-        url: ./skeleton
-        targetPath: .
-        values:
-          name: '${{ parameters.name }}'
-          domainName: '${{ parameters.domainName }}'
-          dataproductName: '${{ parameters.dataproductName }}'
-          description: '${{ parameters.description }}'
-          domain: '${{ parameters.domain }}'
-          dataproduct: '${{ parameters.dataproduct }}'
-          identifier: '${{ parameters.identifier }}'
-          developmentGroup: '${{ parameters.developmentGroup }}'
-          readsFrom: '${{ parameters.readsFrom }}'
-          tags: '${{ parameters.tags }}'
-          region: '${{ parameters.region }}'
-          workerType: '${{ parameters.workerType }}'
-          isFlex: '${{ parameters.executionclass.isFlex }}'
-          timeout: '${{ parameters.timeout }}'
-          numberOfWorkers: '${{ parameters.numberOfWorkers }}'
-          catalogName: '${{ parameters.catalog }}'
-          warehouseLocation: '${{ parameters.warehouseLocation }}'
-          iamRole: '${{ parameters.iamRole }}'
-          additionalJobParameters: '${{ parameters.additionalJobParameters.jobparameters }}'
-          additionalSparkProperties: '${{ parameters.additionalSparkProperties.sparkproperties }}'
-          storageArea: '${{parameters.storageArea}}'
-          useCaseTemplateId: urn:dmb:utm:aws-gluejob-template:0.0.0
-          infrastructureTemplateId: urn:dmb:itm:aws-gluejob-provisioner:0
-          useCaseTemplateVersion: 0.0.0
-          organizationName: AgileDMBSandbox
-          destination: ${{ parameters.repoUrl | parseRepoUrl }}
           
